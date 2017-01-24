@@ -1,0 +1,7 @@
+.DS_Store
+node_modules/
+dist/
+npm-debug.log
+legacy
+/config/env/production.js
+/config/env/testing.js
