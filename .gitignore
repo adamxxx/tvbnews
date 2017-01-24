@@ -5,3 +5,4 @@ npm-debug.log
 legacy
 /config/env/production.js
 /config/env/testing.js
+log

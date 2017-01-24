@@ -1,0 +1,21 @@
+{
+	"apps": [{
+		"name": "api",
+		"exec_mode": "fork_mode",
+		"script": "./server/server.js",
+		"env": {
+			"NODE_ENV": "production",
+			"PORT": 9000
+		},
+		"error_file": "./log/api-error.log",
+		"out_file": "./log/api-output.log",
+		"log_date_format": "YYYY-MM-DD HH:mm Z"
+	}, {
+		"name": "cronjob",
+		"exec_mode": "fork_mode",
+		"script": "./cronjob.js",
+		"error_file": "./log/cronjob-error.log",
+		"out_file": "./log/cronjob-output.log",
+		"log_date_format": "YYYY-MM-DD HH:mm Z"
+	}]
+}

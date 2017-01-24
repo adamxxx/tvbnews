@@ -22,5 +22,12 @@ router.get('/whatthefuck', function* (){
 	throw new Error('What the fuck!');
 });
 
+router.get('/check', function* (){
+	this.body = {
+		env: this.env,
+		version: this.version
+	}
+});
+
 module.exports = router;
 
