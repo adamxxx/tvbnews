@@ -11,6 +11,8 @@ const focusSchema = new Schema({
 	title: {type: String},
 	pubDate: {type: String},
 	category: {type: String},
+	video300k: {type: String},
+	video500k: {type: String},
 	tags: {type: String},
 	image_url: {type: String},
 	image_url_big: {type: String},

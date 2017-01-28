@@ -57,9 +57,10 @@ function* pullFocus(ctx) {
 
 			const pubTime = res.rss.channel.item.at(items_count).attributes().publish_datetime;
 			timerNewTime.push(new Date(pubTime));
+
 			try {
-				_.set(focus, "video300k", res.rss.channel.item.at(items_count).video.at(0).attributes().url);
-				_.set(focus, "video500k", res.rss.channel.item.at(items_count).video.at(1).attributes().url);
+				_.set(focus, "video300k", res.rss.channel.item.at(items_count).video_android.at(0).attributes().url);
+				_.set(focus, "video500k", res.rss.channel.item.at(items_count).video_android.at(1).attributes().url);
 			} catch (err) {
 				logger.warn(res.rss.channel.item.at(items_count).attributes().id + " ::: No video!!");
 			}
@@ -93,10 +94,13 @@ function* sayHi(){
 module.exports = {
 	focus: function*(next) {
 		const ctx = this;
-		const {
-			limit = 10
+		let {
+			limit = 10,
+			skip = 0,
 		} = ctx.query;
-		ctx.body = yield ctx.db.focus.find().limit(Number(limit)).sort('-_created_at');
+		limit = Number(limit) > 100 ? 100 : Number(limit);
+		skip = Number(skip) > 100 ? 100 : Number(skip);
+		ctx.body = yield ctx.db.focus.find().skip(skip).limit(limit).sort('-_created_at');
 	},
 
 	pull: function*(next) {
