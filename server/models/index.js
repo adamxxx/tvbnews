@@ -7,6 +7,7 @@ bluebird.promisifyAll(mongoose);
 
 let Db = {
 	focus: require('./focus'),
+	live: require('./live'),
 	timer: require('./timer'),
 	pullog: require('./pullog')
 };

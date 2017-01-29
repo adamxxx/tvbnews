@@ -11,6 +11,7 @@ const router = new Router({
 });
 
 router.get('/focus', handlers.tvb.focus);
+router.get('/live', handlers.tvb.live);
 
 // router.get('/live', handlers.tvb.live);
 // router.get('/programmes', handlers.tvb.progoramList);
@@ -30,4 +31,3 @@ router.get('/check', function* (){
 });
 
 module.exports = router;
-

@@ -36,75 +36,37 @@ function news_load_more(a) {
 		    $("#myModalTitle").text($(h.target).attr("data-title"))
 		})
 	});
-    // var c = Parse.Object.extend("Focus");
-    // var b = new Parse.Query(c);
-    // b.descending("createdAt");
-    // b.limit(8);
-    // b.skip(a);
-    // b.find({
-    //     success: function(f) {
-    //         console.log(f);
-    //         var g = (a / 8) % 2 ? "active" : "";
-
-    //         for (var e = 0; e < f.length; e++) {
-    //             var d = f[e];
-    //             $('<tr class="' + g + '"><td style="line-height:65px" ><img  class="img-rounded video-img" alt="點我睇視頻" video-src="' + d.video300k + '" style="width: 120px; height: 65px; cursor: pointer;" src="' + d.image_url + '"></td><td style="line-height:65px" >' + d.title + '</td><td style="line-height:65px">' + moment(d.pubDate).startOf("hour").fromNow() + '</td><td><button type="button" style="margin-top:20%" class="newtextbtn btn btn-default btn-sm"  data_date="' + moment(d.pubDate).format("llll") + '" data-content="' + d.description + '" data-title="' + d.title + '">正文</button></td></tr>').insertBefore("#loadtr")
-    //         }
-    //         $("[data-toggle=popover]").popover();
-    //         $("#loading-content").fadeOut("fast");
-    //         $("#loading-mask").fadeOut("fast");
-    //         $(".video-img").click(function() {
-    //             document.getElementById("video-palyer").autoplay = true;
-    //             var h = event.target.getAttribute("video-src");
-    //             if (h != "undefined") {
-    //                 document.getElementById("video-palyer").setAttribute("src", h);
-    //                 $("#video-mask").fadeIn("fast");
-    //                 $("#video-content").fadeIn("show")
-    //             } else {
-    //                 alert("Soooorry,no video~")
-    //             }
-    //         });
-    //         $(".newtextbtn").bind("click", function(h) {
-    //             $("#myModalBody_date").text($(h.target).attr("data_date"));
-    //             $("#myModalBody_text").text($(h.target).attr("data-content"));
-    //             $("#myModal").modal("show");
-    //             $("#myModalTitle").text($(h.target).attr("data-title"))
-    //         })
-    //     },
-    //     error: function(d) {}
-    // });
     offset = a + 8
 }
+
 function live_load() {
-    var a = Parse.Object.extend("Live");
-    var b = new Parse.Query(a);
-    b.descending("createdAt");
-    b.limit(1);
-    b.find({
-        success: function(e) {
-            for (var d = 0; d < e.length; d++) {
-                var c = e[d];
-                console.log(c.get("title"));
-                $('<tr><td style="line-height:65px" ><img  class="img-rounded video-img" alt="直播" video-src="' + c.get("video") + '" style="width: 120px; height: 65px; cursor: pointer;" src="' + c.get("image_url_0") + '"></td><td style="line-height:65px" >' + c.get("description") + '</td><td style="line-height:65px">' + moment(c.get("pubDate")).format("llll") + '</td><td><button id="watch_live" type="button" style="margin-top:20%" class="video-img btn btn-default btn-sm" video-src="' + c.get("video") + '">正文</button></td></tr>').insertBefore("#live_loadtr")
-            }
-            live_loaded = 1;
-            $("#loading-content").fadeOut("fast");
-            $("#loading-mask").fadeOut("fast");
-            $(".video-img").click(function() {
-                document.getElementById("video-palyer").autoplay = true;
-                var f = event.target.getAttribute("video-src");
-                if (f != "undefined") {
-                    document.getElementById("video-palyer").setAttribute("src", f);
-                    $("#video-mask").fadeIn("fast");
-                    $("#video-content").fadeIn("show")
-                } else {
-                    alert("Soooorry,no video~")
-                }
-            })
-        },
-        error: function(c) {}
-    })
+	var uri = LIVE_URL;
+	$.get(uri, function(live) {
+		console.log('===>live', live);
+		    $('<tr><td style="line-height:65px" ><img  class="img-rounded video-img" alt="直播" video-src="' +
+		     live.video_android +
+		     '" style="width: 120px; height: 65px; cursor: pointer;" src="' +
+		     live.image + '"></td><td style="line-height:65px" >' +
+		     live.description + '</td><td style="line-height:65px">' +
+		     moment(live.pubDate).format("llll") + '</td><td><button id="watch_live" type="button" style="margin-top:20%" class="video-img btn btn-default btn-sm" video-src="' +
+		     live.video_android + '">正文</button></td></tr>').insertBefore("#live_loadtr")
+		    live_loaded = 1;
+		    $("#loading-content").fadeOut("fast");
+		    $("#loading-mask").fadeOut("fast");
+		    $(".video-img").click(function() {
+		        document.getElementById("video-palyer").autoplay = true;
+		        var f = event.target.getAttribute("video-src");
+		        if (f != "undefined") {
+		            document.getElementById("video-palyer").setAttribute("src", f);
+		            $("#video-mask").fadeIn("fast");
+		            $("#video-content").fadeIn("show")
+		        } else {
+		            alert("Soooorry,no video~")
+		        }
+		    });
+	});
 }
+
 function Programmes_list_load() {
     var b = Parse.Object.extend("Programmes");
     var a = new Parse.Query(b);
@@ -220,6 +182,7 @@ programmes_loaded = 0;
 var programmes_offset_list = {};
 var programmes_first_list = {};
 var FOCUS_URL = '/v1/focus?limit=8';
+var LIVE_URL = '/v1/live';
 news_load_more(offset);
 $("#leadstyle").click(function() {
     $("html, body").animate({
@@ -240,7 +203,7 @@ $("#live_a").click(function() {
     if (!live_loaded) {
         $("#loading-mask").fadeIn("fast");
         $("#loading-content").fadeIn("show");
-        live_load()
+        live_load();
     }
 });
 $("#programmes_a").click(function() {

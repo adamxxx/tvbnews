@@ -14,8 +14,12 @@ co(function* () {
 	Scheduler.scheduleJob(schedule, function () {
 		logger.info('Job started!', new Date());
 		co(function* () {
-			const uri = 'http://localhost:9000/v1/pull?action=focus';
-			const result = yield request(uri);
+			let uri = 'http://localhost:9000/v1/pull?action=focus';
+			let result = yield request(uri);
+			logger.info(new Date(), result);
+
+			uri = 'http://localhost:9000/v1/pull?action=live';
+			result = yield request(uri);
 			logger.info(new Date(), result);
 		}).catch(function(e){
 			logger.error(e);

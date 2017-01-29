@@ -81,10 +81,53 @@ function* pullFocus(ctx) {
 	const result = yield focusList;
 	timer.Latest_date = _.max(timerNewTime);
 	yield timer.save();
+	const obj = {'focus': result.length, 'action': 'pullFocus'};
 	yield ctx.db.pullog.create({
-		content: {'focus': result.length}
+		content: obj
 	});
-	return {'focus': result.length};
+	return obj;
+}
+
+function* pullLive(ctx) {
+	const xmlString = yield tvb.getLive();
+	const res = yield xmlreader.readAsync(xmlString);
+
+	// get latest live form db
+	let liveDbObj = yield ctx.db.live.find().limit(1).sort('-_updated_at');
+	liveDbObj = liveDbObj[0] || {};
+
+	const live = ctx.db.live();
+
+	_.set(live, "pubDate", res.rss.channel.pubDate.text());
+	_.set(live, "lastBuildDate", res.rss.channel.lastBuildDate.text());
+
+	_.set(live, "title", res.rss.channel.item.at(0).title.text());
+	_.set(live, "description", res.rss.channel.item.at(0).description.text());
+	_.set(live, "path", res.rss.channel.item.at(0).path.text());
+
+	const video_web = res.rss.channel.item.at(0).video_web.at(0).attributes();
+	const video_web_hd = res.rss.channel.item.at(0).video_web.at(1).attributes();
+	_.set(live, "video_web", video_web.url + video_web.vid_file);
+	_.set(live, "video_web_hd", video_web_hd.url + video_web_hd.vid_file);
+
+
+	_.set(live, "video_android", res.rss.channel.item.at(0).video_android.at(0).attributes().url);
+	_.set(live, "video_android_hd", res.rss.channel.item.at(0).video_android.at(1).attributes().url);
+	_.set(live, "audio", res.rss.channel.item.at(0).audio.at(0).attributes().url);
+
+	_.set(live, "image", res.rss.channel.item.at(0).image.at(0).attributes().url);
+
+	const obj = {'live': 0, 'action': 'pullLive'};
+	if (!liveDbObj.lastBuildDate || new Date(live.lastBuildDate).getTime() > new Date(liveDbObj.lastBuildDate).getTime()) {
+		const createdObj = yield live.save();
+		obj.live = 1;
+		obj.live_id = createdObj._id;
+	}
+
+	yield ctx.db.pullog.create({
+		content: obj
+	});
+	return obj;
 }
 
 function* sayHi(){
@@ -103,6 +146,11 @@ module.exports = {
 		ctx.body = yield ctx.db.focus.find().skip(skip).limit(limit).sort('-_created_at');
 	},
 
+	live: function*(next) {
+		const ctx = this;
+		ctx.body = (yield ctx.db.live.find().limit(1).sort('-_updated_at'))[0] || {};
+	},
+
 	pull: function*(next) {
 		const ctx = this;
 		const {
@@ -110,7 +158,8 @@ module.exports = {
 		} = ctx.query;
 
 		const actionMapping = {
-			focus: pullFocus
+			focus: pullFocus,
+			live: pullLive
 		};
 		const result = yield _.get(actionMapping, action, sayHi)(ctx);
 		ctx.body = result;

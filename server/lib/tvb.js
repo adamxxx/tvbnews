@@ -2,7 +2,8 @@
 
 const _ = require('lodash');
 const appRoot = require('app-root-path');
-const xmlparse = require('xmlreader');
+const BB = require('bluebird');
+const xmlreader = BB.promisifyAll(require('xmlreader'));
 
 const config = require(appRoot + '/config');
 const logger = require(appRoot + '/server/lib/logger');
@@ -21,7 +22,8 @@ const BASE = 'http://m.tvb.com';
 
 const PATHS = {
 	// http://tvbnewbbb.appspot.com/?url=http://m.tvb.com/news/focus
-	focus: '/news/focus'
+	focus: '/news/focus',
+	live: '/news/live'
 }
 
 function* callTVB(method, path, option) {
@@ -49,11 +51,36 @@ function* callTVB(method, path, option) {
 module.exports = {
 	getFocus: function* () {
 		return yield callTVB('GET', PATHS.focus);
+	},
+	getLive: function* () {
+		return yield callTVB('GET', PATHS.live);
 	}
 };
 
 // var co = require('co');
 // co(function* () {
+
+// 	const xmlString = yield callTVB('GET', PATHS.live);
+// 	const res = yield xmlreader.readAsync(xmlString);
+
+// 	console.log('===>', res.rss.channel.pubDate.text());
+// 	console.log('===>', res.rss.channel.lastBuildDate.text());
+
+// 	console.log('===>', res.rss.channel.item.at(0).title.text());
+// 	console.log('===>', res.rss.channel.item.at(0).description.text());
+// 	console.log('===>', res.rss.channel.item.at(0).path.text());
+
+// 	console.log('===>', res.rss.channel.item.at(0).video_web.at(0).attributes().url);
+// 	console.log('===>', res.rss.channel.item.at(0).video_web.at(0).attributes().vid_file);
+// 	console.log('===>', res.rss.channel.item.at(0).video_web.at(1).attributes().url);
+// 	console.log('===>', res.rss.channel.item.at(0).video_web.at(1).attributes().vid_file);
+
+// 	console.log('===>', res.rss.channel.item.at(0).video_android.at(0).attributes().url);
+// 	console.log('===>', res.rss.channel.item.at(0).video_android.at(1).attributes().url);
+
+// 	console.log('===>', res.rss.channel.item.at(0).audio.at(0).attributes().url);
+// 	console.log('===>', res.rss.channel.item.at(0).image.at(0).attributes().url);
+
 // 	// var mongoose = require('mongoose');
 // 	// mongoose.connect('mongodb://localhost/test');
 // 	// const bluebird = require('bluebird');
@@ -65,8 +92,8 @@ module.exports = {
 // 	// var kitty = new Cat({ Latest_date: "xfdf" });
 
 // 	// var res = yield kitty.save();
-// 	let res = yield callTVB('GET', PATHS.focus);
-//   console.log(res);
+// 	// let res = yield callTVB('GET', PATHS.focus);
+//   	// console.log(res);
 // }).catch(e=>{
 // 	console.log('err', res);
 // });
