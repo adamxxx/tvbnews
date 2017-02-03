@@ -23,7 +23,9 @@ const BASE = 'http://m.tvb.com';
 const PATHS = {
 	// http://tvbnewbbb.appspot.com/?url=http://m.tvb.com/news/focus
 	focus: '/news/focus',
-	live: '/news/live'
+	live: '/news/live',
+	pgmList: '/news/programmes',
+	pgm: '/news/programmes/:path'
 }
 
 function* callTVB(method, path, option) {
@@ -54,6 +56,12 @@ module.exports = {
 	},
 	getLive: function* () {
 		return yield callTVB('GET', PATHS.live);
+	},
+	getProgrammesList: function* () {
+		return yield callTVB('GET', PATHS.pgmList);
+	},
+	getProgramme: function* () {
+		return yield callTVB('GET', PATHS.pgm);
 	}
 };
 

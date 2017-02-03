@@ -130,6 +130,39 @@ function* pullLive(ctx) {
 	return obj;
 }
 
+function* pullProgrammes(ctx){
+	const xmlString = yield tvb.getProgrammesList();
+	const res = yield xmlreader.readAsync(xmlString);
+
+	const programmeList = [];
+	let createdNo = 0;
+	for (let i = res.rss.channel.item.count() - 1; i >= 0; i--) {
+		let pgm = {};
+		_.set(pgm, 'pubDate', res.rss.channel.pubDate.text());
+		_.set(pgm, 'item_id', res.rss.channel.item.at(i).attributes().id);
+		_.set(pgm, 'title', res.rss.channel.item.at(i).title.text());
+		_.set(pgm, 'path', res.rss.channel.item.at(i).path.text());
+		if (typeof res.rss.channel.item.at(i).description.text === 'function') {
+			_.set(pgm, 'description', res.rss.channel.item.at(i).description.text());
+		}
+		_.set(pgm, 'image_url_0', res.rss.channel.item.at(i).image.at(0).attributes().url);
+		_.set(pgm, 'image_url_1', res.rss.channel.item.at(i).image.at(1).attributes().url);
+		_.set(pgm, 'first_time_onair', res.rss.channel.item.at(i).first_time_onair.text());
+		const dbObj = yield ctx.db.programmes.findOne({path: pgm.path});
+		if (!dbObj) {
+			createdNo++;
+		}
+		programmeList.push(yield ctx.db.programmes.findOneAndUpdate({path: pgm.path}, pgm, {upsert: true, setDefaultsOnInsert: true}))
+	}
+
+	yield programmeList;
+	const obj = {'programmes': createdNo, 'action': 'pullProgrammes'};
+	yield ctx.db.pullog.create({
+		content: obj
+	});
+	return obj;
+}
+
 function* sayHi(){
 	return {hello: 'world!'};
 }
@@ -159,7 +192,8 @@ module.exports = {
 
 		const actionMapping = {
 			focus: pullFocus,
-			live: pullLive
+			live: pullLive,
+			programmes: pullProgrammes
 		};
 		const result = yield _.get(actionMapping, action, sayHi)(ctx);
 		ctx.body = result;
