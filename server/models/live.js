@@ -19,7 +19,7 @@ const liveSchema = new Schema({
 	image: {type: String},
 }, {timestamps: {createdAt: '_created_at', updatedAt: '_updated_at'}});
 
-liveSchema.index({created_at: -1});
-liveSchema.index({created_at: 1});
+liveSchema.index({_created_at: -1});
+liveSchema.index({_updated_at: -1});
 
 module.exports = mongoose.model('lives', liveSchema);

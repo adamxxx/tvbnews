@@ -14,7 +14,7 @@ const newsControlSchema = new Schema({
 });
 
 newsControlSchema.index({
-	created_at: -1
+	_created_at: -1
 });
 
 module.exports = mongoose.model('pullog', newsControlSchema);

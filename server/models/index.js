@@ -9,7 +9,8 @@ let Db = {
 	focus: require('./focus'),
 	live: require('./live'),
 	timer: require('./timer'),
-	pullog: require('./pullog')
+	pullog: require('./pullog'),
+	programmes: require('./programmes'),
 };
 
 Db.connect = function* (uri) {

@@ -19,7 +19,7 @@ const focusSchema = new Schema({
 	description: {type: String},
 }, {timestamps: {createdAt: '_created_at', updatedAt: '_updated_at'}});
 
-focusSchema.index({created_at: -1});
-focusSchema.index({created_at: 1});
+focusSchema.index({_created_at: -1});
+focusSchema.index({_updated_at: -1});
 
 module.exports = mongoose.model('focus', focusSchema);
