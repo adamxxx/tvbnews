@@ -11,6 +11,7 @@ let Db = {
 	timer: require('./timer'),
 	pullog: require('./pullog'),
 	programmes: require('./programmes'),
+	programmedetail: require('./programmedetail'),
 };
 
 Db.connect = function* (uri) {

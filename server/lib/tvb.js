@@ -60,8 +60,8 @@ module.exports = {
 	getProgrammesList: function* () {
 		return yield callTVB('GET', PATHS.pgmList);
 	},
-	getProgramme: function* () {
-		return yield callTVB('GET', PATHS.pgm);
+	getProgramme: function* (path) {
+		return yield callTVB('GET', PATHS.pgm.replace(/:path/ig, path));
 	}
 };
 

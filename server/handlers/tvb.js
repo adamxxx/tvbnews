@@ -163,8 +163,87 @@ function* pullProgrammes(ctx){
 	return obj;
 }
 
+const VIDEO_KEYS = ['video500k','video1500k','video300k'];
+const VIDEO_ANDROID_KEYS = ['video_android_500k','video_android_1500k','video_android_300k'];
+const IMAGES_KEYS = ['image_url_0','image_url_1','image_url_2', 'image_url_3'];
+function* pullProgrammeOne(ctx, path) {
+	const xmlString = yield tvb.getProgramme(path);
+	const res = yield xmlreader.readAsync(xmlString);
+	let createdNo = 0;
+
+	logger.info('pulling the pgm: ', path);
+	if (!res.rss.channel.item){
+		return {'programme': path, 'no': createdNo};
+	}
+
+	const programmeList = [];
+	for (let i = res.rss.channel.item.count() - 1; i >= 0; i--) {
+		const pgm = {};
+		_.set(pgm, 'item_id', res.rss.channel.item.at(i).attributes().id);
+		const dbObj = yield ctx.db.programmedetail.findOne({item_id: pgm.item_id});
+		if (dbObj) continue;
+
+		_.set(pgm, 'description', textGetter(res.rss.channel.item.at(i).description.text));
+		_.set(pgm, 'first_time_onair', textGetter(res.rss.channel.item.at(i).first_time_onair.text));
+
+		let count = !res.rss.channel.item.at(i).image ? 0 : res.rss.channel.item.at(i).image.count();
+		for (let j = 0; j < count && j < 4; j++) {
+			_.set(pgm, IMAGES_KEYS[j], res.rss.channel.item.at(i).image.at(j).attributes().url);
+		}
+
+		_.set(pgm, 'path', path);
+		_.set(pgm, 'onair_episode_no', textGetter(res.rss.channel.item.at(i).onair_episode_no.text));
+		_.set(pgm, 'programme_title', textGetter(res.rss.channel.item.at(i).programme_title.text));
+		_.set(pgm, 'pubDate', textGetter(res.rss.channel.item.at(i).pubDate.text));
+		_.set(pgm, 'title', textGetter(res.rss.channel.item.at(i).title.text));
+
+		count = !res.rss.channel.item.at(i).video ? 0 : res.rss.channel.item.at(i).video.count();
+		for (let j = 0; j < count && j < 3; j ++) {
+			_.set(pgm, VIDEO_KEYS[j], res.rss.channel.item.at(i).video.at(j).attributes().url);
+		}
+
+		count = !res.rss.channel.item.at(i).video_android ? 0 : res.rss.channel.item.at(i).video_android.count();
+		for (let j = 0; j < count && j < 3; j ++) {
+			_.set(pgm, VIDEO_ANDROID_KEYS[j], res.rss.channel.item.at(i).video_android.at(j).attributes().url);
+		}
+
+		createdNo++;
+		programmeList.push(yield ctx.db.programmedetail.findOneAndUpdate({item_id: pgm.item_id}, pgm, {upsert: true, setDefaultsOnInsert: true}))
+	}
+
+	yield programmeList;
+	const obj = {'programme': path, 'total': createdNo};
+	logger.info(obj);
+	return obj;
+}
+
+function* pullProgrammesAll(ctx){
+	const list = yield ctx.db.programmes.find().lean();
+	const yeildList = [];
+
+	for (const pgm of list) {
+		yeildList.push(pullProgrammeOne(ctx, pgm.path));
+	}
+
+	let result = [];
+	while (yeildList.length !== 0) {
+		result = result.concat(yield yeildList.splice(0, 5));
+	}
+
+	logger.info(result);
+	const obj = {'programmes': result, 'action': 'pullProgrammesAll'};
+	yield ctx.db.pullog.create({
+		content: obj
+	});
+	return result;
+}
+
 function* sayHi(){
 	return {hello: 'world!'};
+}
+
+function textGetter(path) {
+	return typeof path === 'function' ? path() : '';
 }
 
 module.exports = {
@@ -184,6 +263,22 @@ module.exports = {
 		ctx.body = (yield ctx.db.live.find().limit(1).sort('-_updated_at'))[0] || {};
 	},
 
+	pgm: function*(next) {
+		const ctx = this;
+		let {
+			limit = 10,
+			skip = 0,
+		} = ctx.query;
+		const path = ctx.params.path;
+		limit = Number(limit) > 100 ? 100 : Number(limit);
+		skip = Number(skip) > 100 ? 100 : Number(skip);
+		if (!path)
+			// const list = yield ctx.db.programmes.find().lean();
+			ctx.body =  yield ctx.db.programmes.find().skip(skip).limit(limit).sort('-_updated_at').lean();
+		else
+			ctx.body = yield ctx.db.programmedetail.find({path: path}).skip(skip).limit(limit).sort('-_updated_at').lean();
+	},
+
 	pull: function*(next) {
 		const ctx = this;
 		const {
@@ -193,7 +288,8 @@ module.exports = {
 		const actionMapping = {
 			focus: pullFocus,
 			live: pullLive,
-			programmes: pullProgrammes
+			programmes: pullProgrammes,
+			programmesAll: pullProgrammesAll
 		};
 		const result = yield _.get(actionMapping, action, sayHi)(ctx);
 		ctx.body = result;
