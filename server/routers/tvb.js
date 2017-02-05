@@ -15,10 +15,6 @@ router.get('/live', handlers.tvb.live);
 router.get('/pgm', handlers.tvb.pgm);
 router.get('/pgm/:path', handlers.tvb.pgm);
 
-// router.get('/live', handlers.tvb.live);
-// router.get('/programmes', handlers.tvb.progoramList);
-// router.get('/programmes/:name', handlers.tvb.progoramDetail);
-
 router.get('/pull', handlers.tvb.pull);
 
 router.get('/whatthefuck', function* (){
