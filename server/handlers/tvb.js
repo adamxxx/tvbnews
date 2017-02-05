@@ -4,6 +4,10 @@ const _ = require('lodash');
 const appRoot = require('app-root-path');
 const tvbParser = require(appRoot + '/server/lib/tvbParser');
 
+function numberPasrer(num, max = 100) {
+	return Number(num) > max ? max : Number(num);
+}
+
 module.exports = {
 	focus: function*(next) {
 		const ctx = this;
@@ -11,8 +15,8 @@ module.exports = {
 			limit = 10,
 			skip = 0,
 		} = ctx.query;
-		limit = Number(limit) > 100 ? 100 : Number(limit);
-		skip = Number(skip) > 100 ? 100 : Number(skip);
+		limit = numberPasrer(limit);
+		skip = numberPasrer(skip);
 		ctx.body = yield ctx.db.focus.find().skip(skip).limit(limit).sort('-_created_at');
 	},
 
@@ -28,10 +32,9 @@ module.exports = {
 			skip = 0,
 		} = ctx.query;
 		const path = ctx.params.path;
-		limit = Number(limit) > 100 ? 100 : Number(limit);
-		skip = Number(skip) > 100 ? 100 : Number(skip);
+		limit = numberPasrer(limit);
+		skip = numberPasrer(skip);
 		if (!path)
-			// const list = yield ctx.db.programmes.find().lean();
 			ctx.body =  yield ctx.db.programmes.find().skip(skip).limit(limit).sort('-_updated_at').lean();
 		else
 			ctx.body = yield ctx.db.programmedetail.find({path: path}).skip(skip).limit(limit).sort('-_updated_at').lean();
