@@ -12,6 +12,7 @@ const router = new Router({
 
 router.get('/focus', handlers.tvb.focus);
 router.get('/live', handlers.tvb.live);
+router.get('/pgm', handlers.tvb.pgm);
 router.get('/pgm/:path', handlers.tvb.pgm);
 
 // router.get('/live', handlers.tvb.live);
