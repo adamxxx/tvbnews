@@ -5,7 +5,7 @@ const appRoot = require('app-root-path');
 const tvbParser = require(appRoot + '/server/lib/tvbParser');
 
 function numberPasrer(num, max = 100) {
-	return Number(num) > max ? max : Number(num);
+	return Number(num) <= max && Number(num) > 0 ? Number(num) : 10;
 }
 
 module.exports = {
