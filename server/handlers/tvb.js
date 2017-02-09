@@ -33,9 +33,9 @@ module.exports = {
 		} = ctx.query;
 		const path = ctx.params.path;
 		limit = numberPasrer(limit);
-		skip = numberPasrer(skip);
+		skip = Number(skip);
 		if (!path)
-			ctx.body =  yield ctx.db.programmes.find().skip(skip).limit(limit).sort('-_updated_at').lean();
+			ctx.body = yield ctx.db.programmes.find().skip(skip).limit(limit).sort('-_updated_at').lean();
 		else
 			ctx.body = yield ctx.db.programmedetail.find({path: path}).skip(skip).limit(limit).sort('-_updated_at').lean();
 	},
