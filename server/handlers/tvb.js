@@ -16,7 +16,7 @@ module.exports = {
 			skip = 0,
 		} = ctx.query;
 		limit = numberPasrer(limit);
-		skip = numberPasrer(skip);
+		skip = Number(skip);
 		ctx.body = yield ctx.db.focus.find().skip(skip).limit(limit).sort('-_created_at');
 	},
 
