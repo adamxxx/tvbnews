@@ -6,3 +6,4 @@ legacy
 /config/env/production.js
 /config/env/testing.js
 log
+data/db/
