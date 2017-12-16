@@ -69,7 +69,7 @@ function* pullProgrammeOne(ctx, path) {
 module.exports = {
 	pullFocus: function*(ctx) {
 		const timerList = yield ctx.db.timer.find().limit(1);
-		const timer = timerList[0];
+		const timerLatest = _.get(timerList[0], 'Latest_date', 0);
 		const xmlString = yield tvb.getFocus();
 		const res = yield xmlreader.readAsync(xmlString);
 
@@ -130,7 +130,7 @@ module.exports = {
 					logger.warn(res.rss.channel.item.at(items_count).attributes().id + " ::: No description!!");
 				}
 
-				if (new Date(timer.Latest_date).getTime() < new Date(res.rss.channel.item.at(items_count).attributes().publish_datetime).getTime()) {
+				if (new Date(timerLatest).getTime() < new Date(res.rss.channel.item.at(items_count).attributes().publish_datetime).getTime()) {
 					focusList.push(focus.save());
 				}
 			} catch (err) {
@@ -138,8 +138,15 @@ module.exports = {
 			}
 		}
 		const result = yield focusList;
-		timer.Latest_date = _.max(timerNewTime);
-		yield timer.save();
+		const newTimerLatest = _.max(timerNewTime);
+
+		if (!_.get(timerList[0], 'id')) {
+			yield ctx.db.timer.create({Latest_date: newTimerLatest});
+		} else {
+			timerList[0].Latest_date = newTimerLatest;
+			yield timerList[0].save()
+		}
+
 		const obj = {
 			'focus': result.length,
 			'action': 'pullFocus'
