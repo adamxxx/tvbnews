@@ -1,1 +1,40 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="description" content="無線新聞"><meta name="author" content="Shiyu Liu"><title>無線新聞</title><link href="asset/bootstrap.min.css" rel="stylesheet"><style type="text/css">             html,       body {        overflow-x: hidden;         text-shadow: 1px 1px 2px #BEB2B2;      }      body {        padding-top: 10px;        background: url(asset/paper.png) repeat;      }      footer {        padding: 30px 0;      }      .loading-mask{        display: none;        position:fixed;        left:0;        top:0;        width:100%;        height:100%;        z-index:20000;        background-color:black;        opacity: 0.6;      }      .loading-content{        display: none;        width: 500px;        position:fixed;        left:30%;        top:31%;        padding:2px;        z-index:20001;        height:auto;      }      .loading-msg{        margin-top:-13px;        margin-left: 41%;        color: #f5f5f5;      }      .nav-tabs a{        color: black;      }    .modal-body{      position:relative;      white-space:pre-line;      padding:20px    }    #leadstyle:hover{      transition: opacity 1s linear;      background: #C0C0C0;      opacity: 0.2;      border-radius: 2px;    }</style></head><body style="bac"><div class="container"><div class="row"><div class="col-xs-1"></div><div class="col-xs-10" ><div class="row" style="min-height: 512px;"><div class="page-header"><h1>TVB無線新聞</h1><p class="lead" id="leadstyle">.</p></div><ul class="nav nav-tabs"><li class="active"><a href="#news" data-toggle="tab">最新要聞</a></li><li><a id="live_a" href="#live" data-toggle="tab">新聞直播</a></li><li><a id="programmes_a" href="#programmes" data-toggle="tab">電視節目</a></li></ul><div class="tab-content"><div class="tab-pane fade in active" id="news"><table  align="center" class="table table-hover"><tbody id="newlist"><tr id="loadtr" align="center"><td colspan="4" style="line-height:65px"  id="loadmore">點我加載更多..........</td></tr></tbody></table></div><div class="tab-pane fade in" id="live"><table  align="center" class="table table-hover"><tbody id="newlist"><tr id="live_loadtr" align="center"><td colspan="4" style="line-height:65px" id="loadmore">....</td></tr></tbody></table></div><div class="tab-pane fade in" id="programmes"><div class="panel-group" id="accordion"><div id="list_insert_before_me" style="display:none">....</div></div></div></div></div><footer><p>Tips:為了可以觀看視頻,建議使用Safari瀏覽器,或者iOS,androi設備訪問本站:)</p><p>免責聲明:本站乃<a href="mailto:xhiyud@gmail.com?subject=From tvb.parse.com">無聊人士</a>因無聊所設,所載內容僅供參考,本站亦不對內容真實性負責,版權歸TVB.com所有</p></footer></div><div class="col-xs-1"></div></div></div><div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 id="myModalTitle" class="modal-title"></h4></div><div id="myModalBody" class="modal-body"><div id="myModalBody_date" style="font-style:italic;"></div><text id="myModalBody_text"></text></div><div class="modal-footer"><button type="button" class="btn btn-primary" data-dismiss="modal">Close</button></div></div></div></div><div class='loading-mask' id="loading-mask"></div><div class="loading-content" id="loading-content" ><div class="progress progress-striped active"><div class="progress-bar progress-bar-info"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div></div><p class="loading-msg">加載中......</p></div><div class='loading-mask' id="video-mask"></div><div class="loading-content" id="video-content"><video id="video-palyer" height="270" width="480" src="" controls ></video></div><script src="asset/jquery.min.js"></script><script src="asset/parse-1.2.18.min.js"></script><script src="asset/bootstrap.min.js"></script><script src="asset/moment-min.js"></script><script src="asset/awesome_html.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <!--
+      manifest.json provides metadata used when your web app is added to the
+      homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
+    -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+    <title>React App</title>
+  </head>
+  <body>
+    <noscript>
+      You need to enable JavaScript to run this app.
+    </noscript>
+    <div id="root"></div>
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+  </body>
+</html>
