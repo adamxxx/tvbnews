@@ -7,6 +7,7 @@ const responseTime = require('koa-response-time');
 const csrf = require('koa-csrf');
 const helmet = require('koa-helmet');
 const serve = require('koa-static');
+const cors = require('koa-cors');
 const bodyParser = require('koa-bodyparser');
 const requireAll = require('require-all');
 const appRoot = require('app-root-path');
@@ -39,6 +40,7 @@ csrf(app);
 app.use(logger());
 
 app.use(errorHandler);
+app.use(cors());
 
 // add db to context
 app.context.db = DB;
